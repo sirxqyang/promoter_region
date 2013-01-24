@@ -1,4 +1,13 @@
-setwd('/Users/bioinfor/Desktop/')
+## R script for getting promoter regions in whole genome
+## usage: Rscript promoter.R 10000
+## example: define the promoter region as the 10000bp 
+## upstream and downstream of the TSS
+
+# setwd('/Users/bioinfor/Desktop/')
+
+args <- commandArgs()
+promoter_region <- as.numeric(args[6])
+
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
@@ -11,19 +20,20 @@ Table <- select(txdb, keys=Keys, cols=cols, keytype="GENEID")
 startpoint <- rep(NA, nrow(Table))
 endpoint <- rep(NA, nrow(Table))
 
+
 for (i in 1:nrow(Table)) {
   row <- Table[i,]
   Strand = row[3]
   if ( Strand == "+") {
     TSS = row[4]
-    Start = TSS - 10000
-    End = TSS + 10000
+    Start = TSS - promoter_region
+    End = TSS + promoter_region
     startpoint[i] = Start
     endpoint[i] = End
   } else if ( Strand == "-") {
     TSS = row[5]
-    Start = TSS + 10000
-    End = TSS - 10000
+    Start = TSS + promoter_region
+    End = TSS - promoter_region
     startpoint[i] = End
     endpoint[i] = Start
   }  
